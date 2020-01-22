@@ -12,7 +12,7 @@ namespace APA_Model
 
         public static async Task<string[]> LoadCountries()
         {
-            string url = apiEndpoint;
+            string url = $"{apiEndpoint}?limit=10000";
 
             using (HttpResponseMessage response = await ApiHelper.ApiClient.GetAsync(url))
             {

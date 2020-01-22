@@ -14,7 +14,7 @@ namespace APA_Model
         public static async Task<string[]> LoadCities(string country)
         {
             string countryCode = Regex.Match(country, @"\(([^)]*)\)").Groups[1].Value;
-            string url = apiEndpoint + "?country=" + countryCode;
+            string url = $"{apiEndpoint}?country={countryCode}&limit=10000";
 
             using (HttpResponseMessage response = await ApiHelper.ApiClient.GetAsync(url))
             {
