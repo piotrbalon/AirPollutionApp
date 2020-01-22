@@ -1,0 +1,42 @@
+﻿<Window x:Class="APA_GUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:APA_GUI"
+        mc:Ignorable="d"
+        xmlns:materialDesign ="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
+        fw:AcrylicWindow.Enabled="True"
+        Loaded="Window_Loaded"
+        Title="MainWindow">
+
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Rectangle Fill="#FFD4D4D4" HorizontalAlignment="Stretch" Height="212" Margin="10,10,0,0" Stroke="Black" VerticalAlignment="Stretch"/>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ComboBox x:Name="countries" HorizontalAlignment="Stretch" Grid.Row="0" Grid.Column="0" SelectionChanged="Country_SelectionChanged" Margin="0,0,20,0"/>
+                    <ComboBox x:Name="cities" HorizontalAlignment="Stretch"  Grid.Row="0" Grid.Column="1" SelectionChanged="City_SelectionChanged" Margin="0,0,20,0"/>
+                    <TextBox Name="countryTextbox" HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" VerticalAlignment="Top" Background="White" Margin="0,0,20,0"/>
+                    <TextBox Name="cityTextbox" HorizontalAlignment="Stretch" Grid.Row="1" Grid.Column="1" TextWrapping="Wrap" VerticalAlignment="Top" Background="White" Margin="0,0,20,0"/>
+                </Grid>
+            </Grid>
+        </Grid>
+</Window>
