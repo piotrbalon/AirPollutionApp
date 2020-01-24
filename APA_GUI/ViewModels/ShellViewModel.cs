@@ -124,7 +124,7 @@ namespace APA_GUI.ViewModels
         private async void MapControl_Loaded(object sender, RoutedEventArgs e)
         {
             // Specify a known location.
-            BasicGeoposition cityPosition = new BasicGeoposition() { Latitude = 47.604, Longitude = -122.329 };
+            BasicGeoposition cityPosition = new BasicGeoposition() { Latitude = 50.061, Longitude = 19.936 };
             var cityCenter = new Geopoint(cityPosition);
 
             // Set the map location.

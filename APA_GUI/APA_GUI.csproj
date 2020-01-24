@@ -38,6 +38,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\APA_Library\APA_Library.csproj" />
+    <ProjectReference Include="..\APA_Tests\APA_Tests.csproj" />
   </ItemGroup>
 
 </Project>

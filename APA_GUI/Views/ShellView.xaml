@@ -6,10 +6,9 @@
         xmlns:materialDesign ="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
         xmlns:controls="clr-namespace:Microsoft.Toolkit.Wpf.UI.Controls;assembly=Microsoft.Toolkit.Wpf.UI.Controls"
-        fw:AcrylicWindow.Enabled="True"
         xmlns:local="clr-namespace:APA_GUI.Views"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
-        Title="Main" MinHeight="500" MinWidth="500">
+        Title="Main" MinHeight="500" MinWidth="500" Opacity="1" Visibility="Visible" Background="White">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -22,7 +21,7 @@
             VerticalAlignment="Stretch"
             ZoomInteractionMode="GestureAndControl"
             TiltInteractionMode="GestureAndControl"
-            MapServiceToken="PDgL4MdBjFo3fxZJPTfE~bkmY3tYpycKy9Ftoqd7bqA~ArLn2M5om-zS8rKfRVCDtJpoi9Cfv9NI5druSFpwaYHwhEGuzPLoQb1Z45WqzedU"
+            MapServiceToken="PDgL4MdBjFo3fxZJPTfE~bkmY3tYpycKy9Ftoqd7bqA~ArLn2M5om-zS8rKfRVCDtJpoi9Cfv9NI5druSFpwaYHwhEGuzPLoQb1Z45WqzedU" ColorScheme="Dark"
         />
         <Grid Grid.Row="1" Margin="10,10">
             <Grid.ColumnDefinitions>
@@ -39,7 +38,7 @@
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Vertical" Grid.Row="0" Margin="0,5">
                     <Label Content="Country" Padding="0,0,0,0" />
-                    <ComboBox ItemsSource="{Binding Countries}" SelectedItem="{Binding SelectedCountry}" HorizontalAlignment="Stretch" Height="30">
+                    <ComboBox ItemsSource="{Binding Countries}" SelectedItem="{Binding SelectedCountry}" HorizontalAlignment="Stretch" Height="30" Background="White" BorderBrush="Black">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Name}" />
@@ -49,7 +48,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Grid.Row="1" Margin="0,5">
                     <Label Content="City" Padding="0,0,0,0" />
-                    <ComboBox ItemsSource="{Binding Cities}" SelectedItem="{Binding SelectedCity}" HorizontalAlignment="Stretch" Height="30" >
+                    <ComboBox ItemsSource="{Binding Cities}" SelectedItem="{Binding SelectedCity}" HorizontalAlignment="Stretch" Height="30" Background="White" BorderBrush="Black" >
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Name}" />
@@ -59,7 +58,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Grid.Row="2" Margin="0,5">
                     <Label Padding="0,0,0,0" Content="Pollutant"/>
-                    <ComboBox ItemsSource="{Binding Pollutants}" SelectedItem="{Binding SelectedPollutant}" HorizontalAlignment="Stretch" Height="30" >
+                    <ComboBox ItemsSource="{Binding Pollutants}" SelectedItem="{Binding SelectedPollutant}" HorizontalAlignment="Stretch" Height="30" Background="White" BorderBrush="Black" >
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Name}" />
@@ -69,11 +68,11 @@
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Grid.Row="3" Margin="0,5">
                     <Label Content="From" Padding="0,0,0,0" />
-                    <DatePicker SelectedDate="{Binding SelectedDateFrom}" DisplayDateStart="{Binding MinimumFromDate}" DisplayDateEnd="{Binding SelectedDateTo}" FirstDayOfWeek="Monday" HorizontalAlignment="Stretch" Height="30"/>
+                    <DatePicker SelectedDate="{Binding SelectedDateFrom}" DisplayDateStart="{Binding MinimumFromDate}" DisplayDateEnd="{Binding SelectedDateTo}" FirstDayOfWeek="Monday" HorizontalAlignment="Stretch" Height="30" Background="White" BorderBrush="Black"/>
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Grid.Row="4" Margin="0,5">
                     <Label Content="To" Padding="0,0,0,0" />
-                    <DatePicker SelectedDate="{Binding SelectedDateTo}" DisplayDateStart="{Binding SelectedDateFrom}" DisplayDateEnd="{Binding MaximumToDate}" FirstDayOfWeek="Monday" HorizontalAlignment="Stretch" Height="30"/>
+                    <DatePicker SelectedDate="{Binding SelectedDateTo}" DisplayDateStart="{Binding SelectedDateFrom}" DisplayDateEnd="{Binding MaximumToDate}" FirstDayOfWeek="Monday" HorizontalAlignment="Stretch" Height="30" Background="White" BorderBrush="Black"/>
                 </StackPanel>
             </Grid>
             <Grid Grid.Column="1" Margin="10,0">
