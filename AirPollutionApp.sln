@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Blend for Visual Studio Version 16
 VisualStudioVersion = 16.0.29509.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APA_Model", "APA_Model\APA_Model.csproj", "{236F2F3D-65E1-45BF-9A91-4A859E505164}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APA_Library", "APA_Library\APA_Library.csproj", "{236F2F3D-65E1-45BF-9A91-4A859E505164}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APA_Tests", "APA_Tests\APA_Tests.csproj", "{A5841D98-4CD5-4FE8-A427-64E47A99010A}"
 	ProjectSection(ProjectDependencies) = postProject

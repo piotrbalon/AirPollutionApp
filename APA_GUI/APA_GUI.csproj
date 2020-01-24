@@ -4,15 +4,40 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentWPF" Version="0.8.0" />
-    <PackageReference Include="MaterialDesignThemes" Version="3.0.1" />
+    <Compile Remove="Models\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <None Remove="Models\**" />
+    <Page Remove="Models\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\APA_Model\APA_Model.csproj" />
+    <Page Remove="app.manifest.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="app.manifest.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Caliburn.Micro" Version="4.0.104-alpha" />
+    <PackageReference Include="FluentWPF" Version="0.8.0" />
+    <PackageReference Include="MaterialDesignThemes" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Toolkit.Win32.UI.Controls" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Toolkit.Win32.UI.SDK" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Toolkit.Win32.UI.XamlApplication" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Toolkit.Wpf.UI.Controls" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Toolkit.Wpf.UI.Controls.WebView" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Toolkit.Wpf.UI.XamlHost" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\APA_Library\APA_Library.csproj" />
   </ItemGroup>
 
 </Project>
