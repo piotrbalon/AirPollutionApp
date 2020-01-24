@@ -7,6 +7,8 @@ using Microsoft.Toolkit.Wpf.UI.Controls;
 using System;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
+using LiveCharts;
+using LiveCharts.Wpf;
 
 namespace APA_GUI.ViewModels
 {

@@ -7,23 +7,43 @@
         xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
         xmlns:controls="clr-namespace:Microsoft.Toolkit.Wpf.UI.Controls;assembly=Microsoft.Toolkit.Wpf.UI.Controls"
         xmlns:local="clr-namespace:APA_GUI.Views"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
-        Title="Main" MinHeight="500" MinWidth="500" Opacity="1" Visibility="Visible" Background="White">
+        Title="Main" MinHeight="500" MinWidth="500" Opacity="1" Visibility="Visible" Background="White" Height="650" Width="1067">
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="524*"/>
+            <ColumnDefinition Width="543*"/>
+        </Grid.ColumnDefinitions>
+
+
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
+
+            <RowDefinition Height="6*"/>
+            <RowDefinition Height="107*"/>
+            <RowDefinition Height="173*"/>
         </Grid.RowDefinitions>
+
+
+        <lvc:CartesianChart Series="{Binding SeriesCollection}" LegendLocation="Right" Margin="13,10,36,9" Grid.RowSpan="2" Grid.Column="1" >
+            <lvc:CartesianChart.AxisY>
+                <lvc:Axis Title="Sales" LabelFormatter="{Binding YFormatter}"></lvc:Axis>
+            </lvc:CartesianChart.AxisY>
+            <lvc:CartesianChart.AxisX>
+                <lvc:Axis Title="Month" Labels="{Binding Labels}"></lvc:Axis>
+            </lvc:CartesianChart.AxisX>
+        </lvc:CartesianChart>
+
+
         <controls:MapControl
             x:Name="MapControl"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
             ZoomInteractionMode="GestureAndControl"
             TiltInteractionMode="GestureAndControl"
-            MapServiceToken="PDgL4MdBjFo3fxZJPTfE~bkmY3tYpycKy9Ftoqd7bqA~ArLn2M5om-zS8rKfRVCDtJpoi9Cfv9NI5druSFpwaYHwhEGuzPLoQb1Z45WqzedU" ColorScheme="Dark"
+            MapServiceToken="PDgL4MdBjFo3fxZJPTfE~bkmY3tYpycKy9Ftoqd7bqA~ArLn2M5om-zS8rKfRVCDtJpoi9Cfv9NI5druSFpwaYHwhEGuzPLoQb1Z45WqzedU" ColorScheme="Dark" Margin="31,6,0,6" HorizontalAlignment="Left" Width="424" Grid.Row="1"
         />
-        <Grid Grid.Row="1" Margin="10,10">
+
+        <Grid Grid.Row="2" Margin="10,10,10,10" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="500"/>
                 <ColumnDefinition Width="*"/>
@@ -38,7 +58,7 @@
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Vertical" Grid.Row="0" Margin="0,5">
                     <Label Content="Country" Padding="0,0,0,0" />
-                    <ComboBox ItemsSource="{Binding Countries}" SelectedItem="{Binding SelectedCountry}" HorizontalAlignment="Stretch" Height="30" Background="White" BorderBrush="Black">
+                    <ComboBox ItemsSource="{Binding Countries}" SelectedItem="{Binding SelectedCountry}" HorizontalAlignment="Stretch" Height="30" Background="White" BorderBrush="Black" >
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Name}" />
@@ -108,3 +128,5 @@
         </Grid>
     </Grid>
 </Window>
+
+    
