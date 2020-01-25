@@ -21,4 +21,4 @@ Projekt oparliśmy na naszej wiedzy oraz pomocach internetowych.
 
 ## Wygląd aplikacji
 
-![](images/1.jpg)
+![](images/1.JPG)
