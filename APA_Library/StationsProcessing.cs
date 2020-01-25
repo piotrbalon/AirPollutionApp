@@ -8,15 +8,19 @@ namespace APA_Library
 {
     public class StationsProcessing
     {
-        private static string apiEndpoint = ApiHelper.ApiEndpoint + "locations";
+        private static string apiEndpoint = ApiHelper.ApiEndpoint + "locations?limit=10000";
 
-        public static async Task<GetResultModel<StationModel[]>> LoadStations(CountryModel country = null, CityModel city = null, PollutantModel pollutant = null)
+        public static async Task<GetResultModel<StationModel[]>> LoadStations(
+            CountryModel country = null, 
+            CityModel city = null,
+            PollutantModel pollutant = null
+        )
         {
             string url = apiEndpoint;
 
             if (!(country is null))
             {
-                url = $"{url}?country={country.Code}&limit=10000";
+                url += $"&country={country.Code}";
             }
 
             if (!(city is null))

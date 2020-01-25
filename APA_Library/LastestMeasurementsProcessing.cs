@@ -1,24 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Net.Http;
-using APA_Library.Helpers;
-using System.Threading.Tasks;
+﻿using APA_Library.Helpers;
 using APA_Library.Models;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace APA_Library
 {
-    public class MeasurementsProcessing
+    public class LastestMeasurementsProcessing
     {
-        private static string apiEndpoint = ApiHelper.ApiEndpoint + "measurements";
+        private static string apiEndpoint = ApiHelper.ApiEndpoint + "latest?limit=10000";
 
-        public static async Task<List<LastestMeasurementsModel>> LoadMeasurements(
+        public static async Task<List<LastestMeasurementsModel>> LoadLatestMeasurements(
             CountryModel country = null,
             CityModel city = null,
-            PollutantModel pollutant = null,
-            StationModel station = null,
-            DateTime? dateFrom = null,
-            DateTime? dateTo = null
+            PollutantModel pollutant = null
         )
         {
             string url = $"{apiEndpoint}?has_geo=true";
@@ -34,21 +31,6 @@ namespace APA_Library
             if (!(pollutant is null))
             {
                 url += $"&parameter={pollutant.Id}";
-            }
-
-            if (!(station is null))
-            {
-                url += $"&location={station.Location}";
-            }
-
-            if (!(dateFrom is null))
-            {
-                url += $"&date_from={dateFrom.Value.ToString("s", CultureInfo.InvariantCulture)}";
-            }
-
-            if (!(dateTo is null))
-            {
-                url += $"&date_to={dateTo.Value.ToString("s", CultureInfo.InvariantCulture)}";
             }
 
             List<LastestMeasurementsModel> measurements = new List<LastestMeasurementsModel>();

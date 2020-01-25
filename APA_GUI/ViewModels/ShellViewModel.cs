@@ -5,6 +5,7 @@ using Caliburn.Micro;
 using Microsoft.Toolkit.Win32.UI.Controls.Interop.WinRT;
 using Microsoft.Toolkit.Wpf.UI.Controls;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 
@@ -19,20 +20,23 @@ namespace APA_GUI.ViewModels
         private CityModel selectedCity { get; set; }
         private StationModel selectedStation { get; set; }
         private PollutantModel selectedPollutant { get; set; }
-        private DateTime selectedDateFrom { get; set; }
-        private DateTime selectedDateTo { get; set; }
+        private DateTime? selectedDateFrom { get; set; }
+        private DateTime? selectedDateTo { get; set; }
 
         public BindableCollection<CountryModel> Countries { get; set; }
         public BindableCollection<CityModel> Cities { get; set; }
         public BindableCollection<StationModel> Stations { get; set; }
         public BindableCollection<PollutantModel> Pollutants { get; set; }
+        public BindableCollection<LastestMeasurementsModel> Measurements { get; set; }
 
+        public string MeasurementsMessage { get; set; }
         public int CountriesCount { get; set; }
         public int CitiesCount { get; set; }
         public int StationsCount { get; set; }
+        public int MeasurementsCount { get; set; }
 
-        public readonly DateTime MinimumFromDate = DateTime.UtcNow.AddDays(-90);
-        public readonly DateTime MaximumToDate = DateTime.UtcNow;
+        public DateTime MinimumFromDate { get; } = DateTime.UtcNow.AddDays(-90);
+        public DateTime MaximumToDate { get; } = DateTime.UtcNow;
 
         public CountryModel SelectedCountry
         {
@@ -42,6 +46,7 @@ namespace APA_GUI.ViewModels
                 selectedCountry = value;
                 _ = LoadCities();
                 _ = LoadStations();
+                _ = LoadMeasurements();
             }
         }
         public CityModel SelectedCity
@@ -51,6 +56,7 @@ namespace APA_GUI.ViewModels
             {
                 selectedCity = value;
                 _ = LoadStations();
+                _ = LoadMeasurements();
             }
         }
         public StationModel SelectedStation { get => selectedStation; set => selectedStation = value; }
@@ -61,26 +67,29 @@ namespace APA_GUI.ViewModels
             {
                 selectedPollutant = value;
                 _ = LoadStations();
+                _ = LoadMeasurements();
             }
         }
 
-        public DateTime SelectedDateFrom
+        public DateTime? SelectedDateFrom
         {
             get => selectedDateFrom;
             set
             {
                 selectedDateFrom = value;
                 NotifyOfPropertyChange(() => SelectedDateFrom);
+                _ = LoadMeasurements();
             }
         }
 
-        public DateTime SelectedDateTo
+        public DateTime? SelectedDateTo
         {
             get => selectedDateTo;
             set
             {
                 selectedDateTo = value;
                 NotifyOfPropertyChange(() => SelectedDateTo);
+                _ = LoadMeasurements();
             }
         }
 
@@ -91,8 +100,10 @@ namespace APA_GUI.ViewModels
             Countries = new BindableCollection<CountryModel>();
             Cities = new BindableCollection<CityModel>();
             Stations = new BindableCollection<StationModel>();
-            SelectedDateFrom = MinimumFromDate;
+
             SelectedDateTo = MaximumToDate;
+            SelectedDateFrom = MinimumFromDate;
+
             _ = LoadCountries();
         }
 
@@ -119,6 +130,22 @@ namespace APA_GUI.ViewModels
             NotifyOfPropertyChange(() => Stations);
             StationsCount = stationsData.Meta.Found;
             NotifyOfPropertyChange(() => StationsCount);
+        }
+
+        private async Task LoadMeasurements()
+        {
+            if (selectedCountry is null || selectedPollutant is null)
+            {
+                MeasurementsMessage = "You need to select pollutant and country.";
+                return;
+            }
+
+            MeasurementsMessage = "";
+            List<LastestMeasurementsModel> measurements = await MeasurementsProcessing.LoadMeasurements(selectedCountry, selectedCity, selectedPollutant, selectedStation, selectedDateFrom, selectedDateTo);
+            Measurements = new BindableCollection<LastestMeasurementsModel>(measurements);
+            NotifyOfPropertyChange(() => Measurements);
+            MeasurementsCount = measurements.Count;
+            NotifyOfPropertyChange(() => MeasurementsCount);
         }
 
         private async void MapControl_Loaded(object sender, RoutedEventArgs e)

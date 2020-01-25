@@ -2,7 +2,8 @@
 
 namespace APA_Library.Models
 {
-    class MeasurementModel
+
+    public class LastestMeasurementsModel
     {
         // Pollution type of measurement
         public string Parameter { get; set; }
@@ -13,7 +14,7 @@ namespace APA_Library.Models
         public double Value { get; set; }
 
         // UTC timestamp of measurement
-        public DateTime Date { get; set; }
+        public MeasurementDateModel Date { get; set; }
 
         public string Location { get; set; }
 
@@ -22,5 +23,11 @@ namespace APA_Library.Models
         public string Country { get; set; }
 
         public Coordinates Coordinates { get; set; }
+
+        public class MeasurementDateModel
+        {
+            public DateTime Utc { get; set; }
+            public DateTime Local { get; set; }
+        }
     }
 }
