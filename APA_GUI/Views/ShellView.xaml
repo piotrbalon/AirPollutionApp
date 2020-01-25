@@ -6,16 +6,17 @@
         xmlns:materialDesign ="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
         xmlns:controls="clr-namespace:Microsoft.Toolkit.Wpf.UI.Controls;assembly=Microsoft.Toolkit.Wpf.UI.Controls"
-        fw:AcrylicWindow.Enabled="True"
         xmlns:local="clr-namespace:APA_GUI.Views"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
-        Title="Main" MinHeight="700" MinWidth="500">
+        Title="Main" MinHeight="500" MinWidth="500" Opacity="1" Visibility="Visible" Background="White">
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+
         <controls:MapControl
             x:Name="MapControl"
             Grid.Row="0"
@@ -24,6 +25,7 @@
             ZoomInteractionMode="GestureAndControl"
             TiltInteractionMode="GestureAndControl"
             MapServiceToken="PDgL4MdBjFo3fxZJPTfE~bkmY3tYpycKy9Ftoqd7bqA~ArLn2M5om-zS8rKfRVCDtJpoi9Cfv9NI5druSFpwaYHwhEGuzPLoQb1Z45WqzedU"
+            ColorScheme="Dark"
         />
         <Grid Grid.Row="1" Margin="10,10">
             <Grid.RowDefinitions>
@@ -144,6 +146,14 @@
                         </ListView.View>
                     </ListView>
                 </StackPanel>
+                <lvc:CartesianChart Series="{Binding SeriesCollection}" LegendLocation="Right" Margin="13,10,36,9" Grid.RowSpan="2" Grid.Column="1" >
+                    <lvc:CartesianChart.AxisY>
+                        <lvc:Axis Title="Sales" LabelFormatter="{Binding YFormatter}"></lvc:Axis>
+                    </lvc:CartesianChart.AxisY>
+                    <lvc:CartesianChart.AxisX>
+                        <lvc:Axis Title="Month" Labels="{Binding Labels}"></lvc:Axis>
+                    </lvc:CartesianChart.AxisX>
+                </lvc:CartesianChart>
             </Grid>
         </Grid>
     </Grid>
