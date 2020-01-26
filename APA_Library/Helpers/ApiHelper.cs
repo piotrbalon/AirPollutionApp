@@ -1,17 +1,16 @@
 ﻿using APA_Library.Models;
 using Newtonsoft.Json;
-using System;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Reflection;
 
 namespace APA_Library.Helpers
 {
     public static class ApiHelper
     {
         public static HttpClient ApiClient { get; private set; }
-        public static string ApiEndpoint = "https://api.openaq.org/v1/";
+        public static string AirQualityApiEndpoint { get; } = "https://api.openaq.org/v1/";
+        public static string GeocodingApiEndpoint { get; } = "http://open.mapquestapi.com/nominatim/v1/search.php?format=json&key=TNEoAE5NkUZjjGXIePZMUCQGdxTcdGEv";
 
         public static void InitializeClient()
         {

@@ -3,37 +3,32 @@ using APA_Library.Models;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace APA_Library
 {
     public class LastestMeasurementsProcessing
     {
-        private static string apiEndpoint = ApiHelper.ApiEndpoint + "latest?limit=10000";
+        private static string apiEndpoint = ApiHelper.AirQualityApiEndpoint + "latest?limit=10000";
 
-        public static async Task<List<LastestMeasurementsModel>> LoadLatestMeasurements(
+        public static async Task<List<LatestMeasurementsModel>> LoadLatestMeasurements(
+            PollutantModel pollutant,
             CountryModel country = null,
-            CityModel city = null,
-            PollutantModel pollutant = null
+            CityModel city = null
         )
         {
-            string url = $"{apiEndpoint}?has_geo=true";
+            if (pollutant is null)
+                throw new ArgumentNullException("Air pollutant cannot be null.");
+
+            string url = $"{apiEndpoint}?has_geo=true&parameter={pollutant.Id}";
 
             if (!(country is null))
-            {
                 url += $"&country={country.Code}";
-            }
 
             if (!(city is null))
                 url += "&city=" + city.Name;
 
-            if (!(pollutant is null))
-            {
-                url += $"&parameter={pollutant.Id}";
-            }
-
-            List<LastestMeasurementsModel> measurements = new List<LastestMeasurementsModel>();
+            List<LatestMeasurementsModel> measurements = new List<LatestMeasurementsModel>();
 
             // first call to api to find out how many measurements are there
             int totalMeasurements = await FetchAndDeserializeMeasurements(measurements, url, 1);
@@ -52,14 +47,14 @@ namespace APA_Library
             return measurements;
         }
 
-        private static async Task<int> FetchAndDeserializeMeasurements(List<LastestMeasurementsModel> measurements, string url, int page = 1)
+        private static async Task<int> FetchAndDeserializeMeasurements(List<LatestMeasurementsModel> measurements, string url, int page = 1)
         {
             string pagedUrl = $"{url}&page={page}&limit=10000";
 
             HttpResponseMessage response = await ApiHelper.ApiClient.GetAsync(pagedUrl);
             if (response.IsSuccessStatusCode)
             {
-                GetResultModel<LastestMeasurementsModel[]> data = await response.Content.ReadAsAsync<GetResultModel<LastestMeasurementsModel[]>>();
+                GetResultModel<LatestMeasurementsModel[]> data = await response.Content.ReadAsAsync<GetResultModel<LatestMeasurementsModel[]>>();
                 measurements.AddRange(data.Results);
                 return data.Meta.Found;
             }

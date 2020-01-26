@@ -3,7 +3,7 @@
 namespace APA_Library.Models
 {
 
-    public class LastestMeasurementsModel
+    public class MeasurementsModel
     {
         // Pollution type of measurement
         public string Parameter { get; set; }

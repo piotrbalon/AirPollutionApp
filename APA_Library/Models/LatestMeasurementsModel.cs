@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace APA_Library.Models
 {
@@ -10,6 +8,8 @@ namespace APA_Library.Models
         public string Country { get; set; }
 
         public string City { get; set; }
+
+        public Coordinates Coordinates { get; set; }
 
         public class MeasurementModel
         {

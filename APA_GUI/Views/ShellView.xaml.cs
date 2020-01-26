@@ -11,6 +11,5 @@ namespace APA_GUI.Views
         {
             InitializeComponent();
         }
-
     }
 }

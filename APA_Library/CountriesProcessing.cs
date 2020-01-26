@@ -8,7 +8,7 @@ namespace APA_Library
 {
     public class CountriesProcessing
     {
-        private static string apiEndpoint = ApiHelper.ApiEndpoint + "countries";
+        private static string apiEndpoint = ApiHelper.AirQualityApiEndpoint + "countries";
 
         public static async Task<GetResultModel<CountryModel[]>> LoadCountries()
         {

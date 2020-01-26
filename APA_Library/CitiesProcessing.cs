@@ -8,7 +8,7 @@ namespace APA_Library
 {
     public class CitiesProcessing
     {
-        private static string apiEndpoint = ApiHelper.ApiEndpoint + "cities";
+        private static string apiEndpoint = ApiHelper.AirQualityApiEndpoint + "cities";
 
         public static async Task<GetResultModel<CityModel[]>> LoadCities(CountryModel country = null)
         {

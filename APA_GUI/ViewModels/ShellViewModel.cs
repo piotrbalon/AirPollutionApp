@@ -2,14 +2,14 @@
 using APA_Library.Helpers;
 using APA_Library.Models;
 using Caliburn.Micro;
-using Microsoft.Toolkit.Win32.UI.Controls.Interop.WinRT;
-using Microsoft.Toolkit.Wpf.UI.Controls;
+using Microsoft.Maps.MapControl.WPF;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Windows.UI.Xaml;
-using LiveCharts;
-using LiveCharts.Wpf;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace APA_GUI.ViewModels
 {
@@ -24,12 +24,34 @@ namespace APA_GUI.ViewModels
         private PollutantModel selectedPollutant { get; set; }
         private DateTime? selectedDateFrom { get; set; }
         private DateTime? selectedDateTo { get; set; }
+        private Location mapCenter { get; set; } = new Location();
+
+        private BindableCollection<UIElement> mapElements = new BindableCollection<UIElement>();
+        private UIElement pinInfobox = new UIElement();
 
         public BindableCollection<CountryModel> Countries { get; set; }
         public BindableCollection<CityModel> Cities { get; set; }
         public BindableCollection<StationModel> Stations { get; set; }
         public BindableCollection<PollutantModel> Pollutants { get; set; }
-        public BindableCollection<LastestMeasurementsModel> Measurements { get; set; }
+        public BindableCollection<MeasurementsModel> Measurements { get; set; }
+        public BindableCollection<UIElement> MapElements
+        {
+            get => mapElements;
+            set
+            {
+                mapElements = value;
+                NotifyOfPropertyChange(() => MapElements);
+            }
+        }
+        public UIElement PinInfobox
+        {
+            get => pinInfobox;
+            set
+            {
+                pinInfobox = value;
+                NotifyOfPropertyChange(() => PinInfobox);
+            }
+        }
 
         public string MeasurementsMessage { get; set; }
         public int CountriesCount { get; set; }
@@ -40,6 +62,8 @@ namespace APA_GUI.ViewModels
         public DateTime MinimumFromDate { get; } = DateTime.UtcNow.AddDays(-90);
         public DateTime MaximumToDate { get; } = DateTime.UtcNow;
 
+        public Map Map { get; set; } = new Map();
+
         public CountryModel SelectedCountry
         {
             get => selectedCountry;
@@ -49,6 +73,8 @@ namespace APA_GUI.ViewModels
                 _ = LoadCities();
                 _ = LoadStations();
                 _ = LoadMeasurements();
+                _ = LoadMapLocation();
+                _ = LoadLatestMeasurements();
             }
         }
         public CityModel SelectedCity
@@ -59,6 +85,8 @@ namespace APA_GUI.ViewModels
                 selectedCity = value;
                 _ = LoadStations();
                 _ = LoadMeasurements();
+                _ = LoadMapLocation();
+                _ = LoadLatestMeasurements();
             }
         }
         public StationModel SelectedStation { get => selectedStation; set => selectedStation = value; }
@@ -70,6 +98,7 @@ namespace APA_GUI.ViewModels
                 selectedPollutant = value;
                 _ = LoadStations();
                 _ = LoadMeasurements();
+                _ = LoadLatestMeasurements();
             }
         }
 
@@ -95,6 +124,29 @@ namespace APA_GUI.ViewModels
             }
         }
 
+        public Location MapCenter
+        {
+            get => mapCenter;
+            set
+            {
+                mapCenter = value;
+                NotifyOfPropertyChange(() => SelectedDateTo);
+            }
+        }
+
+        private BindableCollection<LatestMeasurementsModel> latestMeasurements { get; set; }
+
+        public BindableCollection<LatestMeasurementsModel> LatestMeasurements
+        {
+            get => latestMeasurements;
+            set
+            {
+                latestMeasurements = value;
+                NotifyOfPropertyChange(() => LatestMeasurements);
+            }
+        }
+
+
         public ShellViewModel()
         {
             ApiHelper.InitializeClient();
@@ -116,6 +168,77 @@ namespace APA_GUI.ViewModels
             NotifyOfPropertyChange(() => Countries);
             CountriesCount = countriesData.Meta.Found;
         }
+        private async Task LoadLatestMeasurements()
+        {
+            MapElements = new BindableCollection<UIElement>();
+            NotifyOfPropertyChange(() => MapElements);
+            List<LatestMeasurementsModel> data = await LastestMeasurementsProcessing.LoadLatestMeasurements(selectedPollutant, selectedCountry, selectedCity);
+            latestMeasurements = new BindableCollection<LatestMeasurementsModel>(data);
+            DrawLastestMeasurementsOnMap();
+        }
+
+        public void DrawLastestMeasurementsOnMap()
+        {
+            PollutantModel pollutant = Pollutants.SingleOrDefault(pollutantModel => pollutantModel.Id == selectedPollutant.Id);
+            if (pollutant is null)
+                throw new NullReferenceException("could not find pollutant");
+
+            foreach (LatestMeasurementsModel measurement in latestMeasurements)
+            {
+                Coordinates cords = measurement.Coordinates;
+                LatestMeasurementsModel.MeasurementModel m = measurement.Measurements[0];
+
+                if (cords is null)
+                {
+                    Console.WriteLine($"Null coordinates: {measurement.ToString()}");
+                    continue;
+                }
+
+                PollutantModel.Limit limit =
+                    pollutant.Limits.FirstOrDefault(l =>
+                    {
+                        if (m.Unit is null)
+                        {
+                            Console.WriteLine($"Null measurement unit: {measurement.ToString()}");
+                            return false;
+                        }
+
+                        return m.Unit == l.Unit;
+                    });
+
+                if (limit is null)
+                {
+                    Console.WriteLine($"Could not find pollutant limit: { measurement.ToString()}");
+                    continue;
+                }
+
+                Pushpin pin = new Pushpin();
+                pin.Location = new Location(cords.Latitude, cords.Longitude);
+                pin.Height = 5;
+                pin.Width = 5;
+                pin.Tag = $"{m.Value} {m.Unit} ({m.LastUpdated})";
+                pin.Content = $"{m.Value} {m.Unit} ({m.LastUpdated})";
+                ToolTipService.SetToolTip(pin, pin.Content);
+
+                double mValue = measurement.Measurements[0].Value;
+                if (mValue < limit.Value)
+                    pin.Background = Brushes.Green;
+                else if (mValue <= (2 * limit.Value))
+                    pin.Background = Brushes.Yellow;
+                else if (mValue <= (3 * limit.Value))
+                    pin.Background = Brushes.Orange;
+                else if (mValue <= (4 * limit.Value))
+                    pin.Background = Brushes.Red;
+                else if (mValue <= (5 * limit.Value))
+                    pin.Background = Brushes.DarkRed;
+                else if (mValue > (5 * limit.Value))
+                    pin.Background = Brushes.Black;
+
+
+                MapElements.Add(pin);
+            }
+            NotifyOfPropertyChange(() => MapElements);
+        }
 
         private async Task LoadCities()
         {
@@ -134,6 +257,13 @@ namespace APA_GUI.ViewModels
             NotifyOfPropertyChange(() => StationsCount);
         }
 
+        private async Task LoadMapLocation()
+        {
+            MapLocationModel coords = await MapLocationProcessing.LoadMapLocation(selectedCountry, selectedCity);
+            mapCenter = new Location() { Latitude = coords.Lat, Longitude = coords.Lon };
+            NotifyOfPropertyChange(() => MapCenter);
+        }
+
         private async Task LoadMeasurements()
         {
             if (selectedCountry is null || selectedPollutant is null)
@@ -143,21 +273,13 @@ namespace APA_GUI.ViewModels
             }
 
             MeasurementsMessage = "";
-            List<LastestMeasurementsModel> measurements = await MeasurementsProcessing.LoadMeasurements(selectedCountry, selectedCity, selectedPollutant, selectedStation, selectedDateFrom, selectedDateTo);
-            Measurements = new BindableCollection<LastestMeasurementsModel>(measurements);
+            List<MeasurementsModel> measurements = await MeasurementsProcessing.LoadMeasurements(selectedCountry, selectedCity, selectedPollutant, selectedStation, selectedDateFrom, selectedDateTo);
+            Measurements = new BindableCollection<MeasurementsModel>(measurements);
             NotifyOfPropertyChange(() => Measurements);
             MeasurementsCount = measurements.Count;
             NotifyOfPropertyChange(() => MeasurementsCount);
         }
 
-        private async void MapControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            // Specify a known location.
-            BasicGeoposition cityPosition = new BasicGeoposition() { Latitude = 50.061, Longitude = 19.936 };
-            var cityCenter = new Geopoint(cityPosition);
 
-            // Set the map location.
-            await ((MapControl)sender).TrySetViewAsync(cityCenter, 12);
-        }
     }
 }

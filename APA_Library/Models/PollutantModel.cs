@@ -13,19 +13,17 @@
             bc
         }
 
-        public enum Period
-        {
-            hour,
-            day,
-            year
-        }
-
         public class Limit
         {
             public string Unit;
-            public Period Period;
+            public string Period;
             public double Value;
-            public Limit(string unit, Period period, double value)
+
+            public Limit()
+            {
+            }
+
+            public Limit(string unit, string period, double value)
             {
                 Unit = unit;
                 Period = period;

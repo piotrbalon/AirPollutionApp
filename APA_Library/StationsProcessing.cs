@@ -8,10 +8,10 @@ namespace APA_Library
 {
     public class StationsProcessing
     {
-        private static string apiEndpoint = ApiHelper.ApiEndpoint + "locations?limit=10000";
+        private static string apiEndpoint = ApiHelper.AirQualityApiEndpoint + "locations?limit=10000";
 
         public static async Task<GetResultModel<StationModel[]>> LoadStations(
-            CountryModel country = null, 
+            CountryModel country = null,
             CityModel city = null,
             PollutantModel pollutant = null
         )

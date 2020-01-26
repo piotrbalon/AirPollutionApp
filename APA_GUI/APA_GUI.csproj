@@ -30,6 +30,7 @@
     <PackageReference Include="LiveCharts" Version="0.9.7" />
     <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
     <PackageReference Include="MaterialDesignThemes" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Maps.MapControl.WPF" Version="1.0.0.3" />
     <PackageReference Include="Microsoft.Toolkit.Win32.UI.Controls" Version="5.0.0" />
     <PackageReference Include="Microsoft.Toolkit.Win32.UI.SDK" Version="6.0.0" />
     <PackageReference Include="Microsoft.Toolkit.Win32.UI.XamlApplication" Version="6.0.0" />
