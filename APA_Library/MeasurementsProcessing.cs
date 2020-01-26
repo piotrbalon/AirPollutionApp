@@ -13,9 +13,9 @@ namespace APA_Library
         private static string apiEndpoint = ApiHelper.AirQualityApiEndpoint + "measurements";
 
         public static async Task<List<MeasurementsModel>> LoadMeasurements(
-            CountryModel country = null,
+            PollutantModel pollutant,
+            CountryModel country,
             CityModel city = null,
-            PollutantModel pollutant = null,
             StationModel station = null,
             DateTime? dateFrom = null,
             DateTime? dateTo = null
@@ -81,8 +81,8 @@ namespace APA_Library
                 measurements.AddRange(data.Results);
                 return data.Meta.Found;
             }
-
-            throw new Exception(response.ReasonPhrase);
+            Console.WriteLine(response.ReasonPhrase);
+            return 0;
         }
     }
 }

@@ -36,9 +36,9 @@ namespace APA_Library
 
             // fetch all pages
             Task[] tasks = new Task[pages];
-            for (int page = 2; page <= pages; page++)
+            for (int page = 2, i = 0; page <= pages; page++, i++)
             {
-                tasks[page] = FetchAndDeserializeMeasurements(measurements, url, page);
+                tasks[i] = FetchAndDeserializeMeasurements(measurements, url, page);
             }
 
             // wait until all pages are fetched
@@ -59,7 +59,8 @@ namespace APA_Library
                 return data.Meta.Found;
             }
 
-            throw new Exception(response.ReasonPhrase);
+            Console.WriteLine(response.ReasonPhrase);
+            return 0;
         }
     }
 }

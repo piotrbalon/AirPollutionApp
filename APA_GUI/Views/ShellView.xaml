@@ -21,8 +21,8 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             CredentialsProvider="PDgL4MdBjFo3fxZJPTfE~bkmY3tYpycKy9Ftoqd7bqA~ArLn2M5om-zS8rKfRVCDtJpoi9Cfv9NI5druSFpwaYHwhEGuzPLoQb1Z45WqzedU"
-            Center="{Binding MapCenter}"
-            ZoomLevel="2"
+            Center="{Binding MapCenter, Mode=TwoWay}"
+            ZoomLevel="{Binding MapZoomLevel, Mode=TwoWay}"
         >
             <maps:MapItemsControl ItemsSource="{Binding PinInfobox}"/>
             <maps:MapItemsControl ItemsSource="{Binding MapElements}"/>
@@ -35,15 +35,13 @@
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="500"/>
+                    <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0" Margin="10,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
                         <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <StackPanel Orientation="Vertical" Grid.Row="0" Margin="0,5">
@@ -76,20 +74,10 @@
                             </ComboBox.ItemTemplate>
                         </ComboBox>
                     </StackPanel>
-                    <StackPanel Orientation="Vertical" Grid.Row="3" Margin="0,5">
-                        <TextBlock Padding="0,0,0,0" >Measurements Stations (<TextBlock Text="{Binding StationsCount}"/> )</TextBlock>
-                        <ComboBox ItemsSource="{Binding Stations}" SelectedItem="{Binding SelectedCity}" HorizontalAlignment="Stretch" Height="30" >
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Name}" > <TextBlock Text="{Binding SourceName}" /></TextBlock>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                    </StackPanel>
-                    
                 </Grid>
                 <Grid Grid.Column="1" Margin="10,0">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
                         <RowDefinition Height="auto" />
                         <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
@@ -101,15 +89,22 @@
                         <Label Content="To" Padding="0,0,0,0" />
                         <DatePicker SelectedDate="{Binding SelectedDateTo}" DisplayDateStart="{Binding SelectedDateFrom}" DisplayDateEnd="{Binding MaximumToDate, Mode=OneWay}" FirstDayOfWeek="Monday" HorizontalAlignment="Stretch" Height="30"/>
                     </StackPanel>
+                    <StackPanel Orientation="Vertical" Grid.Row="2" Margin="0,5">
+                        <TextBlock Padding="0,0,0,0" >Measurements Stations (<TextBlock Text="{Binding StationsCount}"/> )</TextBlock>
+                        <ComboBox ItemsSource="{Binding Stations}" SelectedItem="{Binding SelectedStation}" HorizontalAlignment="Stretch" Height="30" >
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Location}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
                 </Grid>
             </Grid>
             <Grid Grid.Row="1">
-                <lvc:CartesianChart Series="{Binding SeriesCollection}" LegendLocation="Right" Margin="13,10,36,9" >
-                    <lvc:CartesianChart.AxisY>
-                        <lvc:Axis Title="Sales" LabelFormatter="{Binding YFormatter}"></lvc:Axis>
-                    </lvc:CartesianChart.AxisY>
+                <lvc:CartesianChart Series="{Binding SeriesCollection}" Zoom="X" ScrollMode="X" LegendLocation="Top" >
                     <lvc:CartesianChart.AxisX>
-                        <lvc:Axis Title="Month" Labels="{Binding Labels}"></lvc:Axis>
+                        <lvc:Axis LabelFormatter="{Binding Formatter}"></lvc:Axis>
                     </lvc:CartesianChart.AxisX>
                 </lvc:CartesianChart>
             </Grid>

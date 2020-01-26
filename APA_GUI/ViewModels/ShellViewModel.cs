@@ -2,6 +2,10 @@
 using APA_Library.Helpers;
 using APA_Library.Models;
 using Caliburn.Micro;
+using LiveCharts;
+using LiveCharts.Configurations;
+using LiveCharts.Helpers;
+using LiveCharts.Wpf;
 using Microsoft.Maps.MapControl.WPF;
 using System;
 using System.Collections.Generic;
@@ -25,6 +29,7 @@ namespace APA_GUI.ViewModels
         private DateTime? selectedDateFrom { get; set; }
         private DateTime? selectedDateTo { get; set; }
         private Location mapCenter { get; set; } = new Location();
+        private int mapZoomLevel { get; set; } = 3;
 
         private BindableCollection<UIElement> mapElements = new BindableCollection<UIElement>();
         private UIElement pinInfobox = new UIElement();
@@ -34,6 +39,7 @@ namespace APA_GUI.ViewModels
         public BindableCollection<StationModel> Stations { get; set; }
         public BindableCollection<PollutantModel> Pollutants { get; set; }
         public BindableCollection<MeasurementsModel> Measurements { get; set; }
+
         public BindableCollection<UIElement> MapElements
         {
             get => mapElements;
@@ -43,6 +49,7 @@ namespace APA_GUI.ViewModels
                 NotifyOfPropertyChange(() => MapElements);
             }
         }
+
         public UIElement PinInfobox
         {
             get => pinInfobox;
@@ -59,7 +66,7 @@ namespace APA_GUI.ViewModels
         public int StationsCount { get; set; }
         public int MeasurementsCount { get; set; }
 
-        public DateTime MinimumFromDate { get; } = DateTime.UtcNow.AddDays(-90);
+        public DateTime MinimumFromDate { get; } = DateTime.UtcNow.AddDays(-3);
         public DateTime MaximumToDate { get; } = DateTime.UtcNow;
 
         public Map Map { get; set; } = new Map();
@@ -70,6 +77,7 @@ namespace APA_GUI.ViewModels
             set
             {
                 selectedCountry = value;
+                mapZoomLevel = 5;
                 _ = LoadCities();
                 _ = LoadStations();
                 _ = LoadMeasurements();
@@ -77,19 +85,33 @@ namespace APA_GUI.ViewModels
                 _ = LoadLatestMeasurements();
             }
         }
+
         public CityModel SelectedCity
         {
             get => selectedCity;
             set
             {
                 selectedCity = value;
+                mapZoomLevel = 10;
                 _ = LoadStations();
                 _ = LoadMeasurements();
                 _ = LoadMapLocation();
                 _ = LoadLatestMeasurements();
             }
         }
-        public StationModel SelectedStation { get => selectedStation; set => selectedStation = value; }
+
+        public StationModel SelectedStation
+        {
+            get => selectedStation;
+            set
+            {
+                selectedStation = value;
+                _ = LoadMeasurements();
+                _ = LoadMapLocation();
+                _ = LoadLatestMeasurements();
+            }
+        }
+
         public PollutantModel SelectedPollutant
         {
             get => selectedPollutant;
@@ -130,7 +152,17 @@ namespace APA_GUI.ViewModels
             set
             {
                 mapCenter = value;
-                NotifyOfPropertyChange(() => SelectedDateTo);
+                NotifyOfPropertyChange(() => MapCenter);
+            }
+        }
+
+        public int MapZoomLevel
+        {
+            get => mapZoomLevel;
+            set
+            {
+                mapZoomLevel = value;
+                NotifyOfPropertyChange(() => MapZoomLevel);
             }
         }
 
@@ -168,18 +200,25 @@ namespace APA_GUI.ViewModels
             NotifyOfPropertyChange(() => Countries);
             CountriesCount = countriesData.Meta.Found;
         }
+
         private async Task LoadLatestMeasurements()
         {
+            if (selectedPollutant is null)
+                throw new NullReferenceException("You need to choose pollutant.");
+
             MapElements = new BindableCollection<UIElement>();
             NotifyOfPropertyChange(() => MapElements);
-            List<LatestMeasurementsModel> data = await LastestMeasurementsProcessing.LoadLatestMeasurements(selectedPollutant, selectedCountry, selectedCity);
+            List<LatestMeasurementsModel> data =
+                await LastestMeasurementsProcessing.LoadLatestMeasurements(selectedPollutant, selectedCountry,
+                    selectedCity);
             latestMeasurements = new BindableCollection<LatestMeasurementsModel>(data);
             DrawLastestMeasurementsOnMap();
         }
 
         public void DrawLastestMeasurementsOnMap()
         {
-            PollutantModel pollutant = Pollutants.SingleOrDefault(pollutantModel => pollutantModel.Id == selectedPollutant.Id);
+            PollutantModel pollutant =
+                Pollutants.SingleOrDefault(pollutantModel => pollutantModel.Id == selectedPollutant.Id);
             if (pollutant is null)
                 throw new NullReferenceException("could not find pollutant");
 
@@ -208,7 +247,7 @@ namespace APA_GUI.ViewModels
 
                 if (limit is null)
                 {
-                    Console.WriteLine($"Could not find pollutant limit: { measurement.ToString()}");
+                    Console.WriteLine($"Could not find pollutant limit: {measurement.ToString()}");
                     continue;
                 }
 
@@ -237,6 +276,7 @@ namespace APA_GUI.ViewModels
 
                 MapElements.Add(pin);
             }
+
             NotifyOfPropertyChange(() => MapElements);
         }
 
@@ -250,7 +290,8 @@ namespace APA_GUI.ViewModels
 
         private async Task LoadStations()
         {
-            GetResultModel<StationModel[]> stationsData = await StationsProcessing.LoadStations(selectedCountry, selectedCity, selectedPollutant);
+            GetResultModel<StationModel[]> stationsData =
+                await StationsProcessing.LoadStations(selectedCountry, selectedCity, selectedPollutant);
             Stations = new BindableCollection<StationModel>(stationsData.Results);
             NotifyOfPropertyChange(() => Stations);
             StationsCount = stationsData.Meta.Found;
@@ -260,26 +301,56 @@ namespace APA_GUI.ViewModels
         private async Task LoadMapLocation()
         {
             MapLocationModel coords = await MapLocationProcessing.LoadMapLocation(selectedCountry, selectedCity);
-            mapCenter = new Location() { Latitude = coords.Lat, Longitude = coords.Lon };
-            NotifyOfPropertyChange(() => MapCenter);
+            mapCenter = new Location() { Latitude = coords.Lat, Longitude = coords.Lat };
+        }
+
+        public SeriesCollection SeriesCollection { get; set; }
+        public string[] Labels { get; set; }
+        public Func<double, string> Formatter { get; set; }
+        class DateModel
+        {
+            public System.DateTime DateTime { get; set; }
+            public double Avg { get; set; }
         }
 
         private async Task LoadMeasurements()
         {
-            if (selectedCountry is null || selectedPollutant is null)
+            if (selectedPollutant is null)
             {
                 MeasurementsMessage = "You need to select pollutant and country.";
                 return;
             }
 
             MeasurementsMessage = "";
-            List<MeasurementsModel> measurements = await MeasurementsProcessing.LoadMeasurements(selectedCountry, selectedCity, selectedPollutant, selectedStation, selectedDateFrom, selectedDateTo);
+            List<MeasurementsModel> measurements = await MeasurementsProcessing.LoadMeasurements(selectedPollutant, selectedCountry, selectedCity, selectedStation, selectedDateFrom, selectedDateTo);
             Measurements = new BindableCollection<MeasurementsModel>(measurements);
             NotifyOfPropertyChange(() => Measurements);
             MeasurementsCount = measurements.Count;
             NotifyOfPropertyChange(() => MeasurementsCount);
+
+            //Days
+            CartesianMapper<DateModel> dayConfig = Mappers.Xy<DateModel>()
+                .X(dateModel => dateModel.DateTime.Ticks / TimeSpan.FromHours(1).Ticks)
+                .Y(dateModel => dateModel.Avg);
+            //and the formatter
+            Formatter = value => new DateTime((long)(value * TimeSpan.FromHours(1).Ticks)).ToString("MM/dd/yyyy HH:mm");
+            NotifyOfPropertyChange(() => Formatter);
+
+            IEnumerable<DateModel> values = measurements
+                .GroupBy(m => m.Date.Utc)
+                .Select(g => new DateModel { DateTime = g.Key, Avg = g.Average(s => s.Value) });
+
+
+            SeriesCollection = new SeriesCollection(dayConfig);
+            SeriesCollection.Add(
+                new LineSeries
+                {
+                    Title = "Average from all stations",
+                    Values = values.AsChartValues()
+                }
+            );
+
+            NotifyOfPropertyChange(() => SeriesCollection);
         }
-
-
     }
 }
