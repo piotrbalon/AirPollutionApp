@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# xUnit1010: The value is not convertible to the method parameter type
+dotnet_diagnostic.xUnit1010.severity = warning

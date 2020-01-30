@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Xceed.Wpf.Toolkit;
 
 namespace APA_Library
 {
@@ -21,6 +22,7 @@ namespace APA_Library
             DateTime? dateTo = null
         )
         {
+            
             string url = $"{apiEndpoint}?has_geo=true";
 
             if (!(country is null))
@@ -54,6 +56,7 @@ namespace APA_Library
             List<MeasurementsModel> measurements = new List<MeasurementsModel>();
 
             // first call to api to find out how many measurements are there
+
             int totalMeasurements = await FetchAndDeserializeMeasurements(measurements, url, 1);
             int pages = totalMeasurements / 10000;
 
@@ -63,11 +66,12 @@ namespace APA_Library
             {
                 tasks[i] = FetchAndDeserializeMeasurements(measurements, url, page);
             }
-
             // wait until all pages are fetched
+            //busyIndicator.IsBusy = true;
             await Task.WhenAll(tasks);
-
+            //busyIndicator.IsBusy = false;
             return measurements;
+            
         }
 
         private static async Task<int> FetchAndDeserializeMeasurements(List<MeasurementsModel> measurements, string url, int page = 1)

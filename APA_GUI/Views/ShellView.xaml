@@ -8,6 +8,7 @@
         xmlns:maps="clr-namespace:Microsoft.Maps.MapControl.WPF;assembly=Microsoft.Maps.MapControl.WPF"
         xmlns:local="clr-namespace:APA_GUI.Views"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
         Title="Main" MinHeight="500" MinWidth="500" Opacity="1" Visibility="Visible" Background="White">
 
@@ -109,5 +110,7 @@
                 </lvc:CartesianChart>
             </Grid>
         </Grid>
+        <xctk:BusyIndicator IsBusy="True" Margin="0,198,0,446" Grid.RowSpan="2" >
+        </xctk:BusyIndicator>
     </Grid>
 </Window>
