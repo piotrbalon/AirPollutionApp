@@ -32,19 +32,22 @@ namespace APA_Library
 
             // first call to api to find out how many measurements are there
             int totalMeasurements = await FetchAndDeserializeMeasurements(measurements, url, 1);
-            int pages = totalMeasurements / 10000;
-
-            // fetch all pages
-            Task[] tasks = new Task[pages];
-            for (int page = 2, i = 0; page <= pages; page++, i++)
+            
+            if (totalMeasurements > 10000)
             {
-                tasks[i] = FetchAndDeserializeMeasurements(measurements, url, page);
+                int pages = (int)Math.Ceiling((double)totalMeasurements / 10000);
+                // fetch all pages
+                Task[] tasks = new Task[pages - 1];
+                for (int page = 2, i = 0; page <= pages; page++, i++)
+                {
+                    tasks[i] = FetchAndDeserializeMeasurements(measurements, url, page);
+                }
+
+                // wait until all pages are fetched
+                await Task.WhenAll(tasks);
             }
-
-            // wait until all pages are fetched
-            await Task.WhenAll(tasks);
-
             return measurements;
+
         }
 
         private static async Task<int> FetchAndDeserializeMeasurements(List<LatestMeasurementsModel> measurements, string url, int page = 1)

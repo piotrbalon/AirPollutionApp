@@ -315,15 +315,19 @@ namespace APA_GUI.ViewModels
 
         private async Task LoadMeasurements()
         {
-            if (selectedPollutant is null)
+            if (selectedPollutant is null || selectedCountry is null)
             {
                 MeasurementsMessage = "You need to select pollutant and country.";
+                NotifyOfPropertyChange(() => MeasurementsMessage);
                 return;
             }
 
-            MeasurementsMessage = "";
+            MeasurementsMessage = "Loading measurements...";
+            NotifyOfPropertyChange(() => MeasurementsMessage);
             List<MeasurementsModel> measurements = await MeasurementsProcessing.LoadMeasurements(selectedPollutant, selectedCountry, selectedCity, selectedStation, selectedDateFrom, selectedDateTo);
             Measurements = new BindableCollection<MeasurementsModel>(measurements);
+            MeasurementsMessage = "Measurements";
+            NotifyOfPropertyChange(() => MeasurementsMessage);
             NotifyOfPropertyChange(() => Measurements);
             MeasurementsCount = measurements.Count;
             NotifyOfPropertyChange(() => MeasurementsCount);
